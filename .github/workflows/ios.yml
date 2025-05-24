@@ -1,0 +1,48 @@
+name: iOS CI - Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build and Test on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Validate project.pbxproj
+        run: |
+          if ! plutil -lint AvatarAiPayWall.xcodeproj/project.pbxproj; then
+            echo "project.pbxproj is invalid"
+            exit 1
+          fi
+
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
+
+      - name: Install Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies -project AvatarAiPayWall.xcodeproj
+
+      - name: Build App
+        run: |
+          xcodebuild \
+            -project AvatarAiPayWall.xcodeproj \
+            -scheme AvatarAiPayWall \
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest' \
+            clean build
+
+      - name: Run Tests
+        run: |
+          xcodebuild \
+            -project AvatarAiPayWall.xcodeproj \
+            -scheme AvatarAiPayWall \
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=latest' \
+            test
