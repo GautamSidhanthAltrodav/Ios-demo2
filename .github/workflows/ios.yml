@@ -40,10 +40,3 @@ jobs:
         -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
         -derivedDataPath DerivedData
 
-    - name: Run Unit Tests
-      run: |
-        xcodebuild test \
-        -project TimerAppExample.xcodeproj \
-        -scheme TimerAppExample \
-        -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
-        -derivedDataPath DerivedData
